@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gerenciar Promoções - Cafeteria Universitária{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <h2 class="fw-bolder mb-4">Gerenciar Promoções</h2>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary mb-4">Voltar ao Painel</a>
+
+        {% if messages %}
+            <div class="alert alert-dismissible fade show" role="alert">
+                {% for message in messages %}
+                    <div class="alert-{% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+
+        <h3>Adicionar Nova Promoção</h3>
+        <form method="post" action="{% url 'add_promocao' %}" id="add-promocao-form">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="titulo" class="form-label">Título</label>
+                <input type="text" class="form-control" id="titulo" name="titulo" value="{{ form_data.titulo|default:'' }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="descricao" class="form-label">Descrição</label>
+                <textarea class="form-control" id="descricao" name="descricao">{{ form_data.descricao|default:'' }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="desconto" class="form-label">Desconto (%)</label>
+                <input type="number" step="0.01" class="form-control" id="desconto" name="desconto" value="{{ form_data.desconto|default:'' }}" required min="0.01" max="100">
+            </div>
+            <div class="mb-3">
+                <label for="data_inicio" class="form-label">Data de Início</label>
+                <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="{{ form_data.data_inicio|default:'' }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="data_fim" class="form-label">Data de Fim</label>
+                <input type="date" class="form-control" id="data_fim" name="data_fim" value="{{ form_data.data_fim|default:'' }}" required>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="ativa" name="ativa" {% if form_data.ativa %}checked{% endif %}>
+                <label class="form-check-label" for="ativa">Ativa</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Adicionar Promoção</button>
+        </form>
+
+        <h3 class="mt-5">Promoções Atuais</h3>
+        {% if promocoes %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Título</th>
+                            <th>Desconto</th>
+                            <th>Período</th>
+                            <th>Ativa</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for promocao in promocoes %}
+                            <tr>
+                                <td>{{ promocao.titulo }}</td>
+                                <td>{{ promocao.desconto }}%</td>
+                                <td>{{ promocao.data_inicio|date:"d/m/Y" }} - {{ promocao.data_fim|date:"d/m/Y" }}</td>
+                                <td>{{ promocao.ativa|yesno:"Sim,Não" }}</td>
+                                <td>
+                                    <a href="{% url 'edit_promocao' promocao.id %}" class="btn btn-sm btn-warning">Editar</a>
+                                    <form method="post" action="{% url 'delete_promocao' promocao.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir {{ promocao.titulo }}?')">Excluir</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">Nenhuma promoção cadastrada.</p>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+    document.getElementById('add-promocao-form').addEventListener('submit', function(e) {
+        const desconto = document.getElementById('desconto').value;
+        if (desconto <= 0 || desconto > 100) {
+            e.preventDefault();
+            alert('O desconto deve estar entre 0.01 e 100.');
+        }
+    });
+</script>
+{% endblock %}

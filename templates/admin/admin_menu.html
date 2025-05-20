@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gerenciar Cardápio{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <h2 class="fw-bolder mb-4">Gerenciar Cardápio</h2>
+        <!-- Formulário para adicionar item -->
+        <div class="card mb-4">
+            <div class="card-header">Adicionar Novo Item</div>
+            <div class="card-body">
+                <form method="post" action="{% url 'add_menu_item' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="nome" name="nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="descricao" name="descricao" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="preco" class="form-label">Preço</label>
+                        <input type="number" class="form-control" id="preco" name="preco" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoria" class="form-label">Categoria</label>
+                        <select class="form-select" id="categoria" name="categoria" required>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Alimentos">Alimentos</option>
+                            <option value="Sobremesas">Sobremesas</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="imagem" class="form-label">Imagem</label>
+                        <input type="file" class="form-control" id="imagem" name="imagem">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="disponibilidade" name="disponibilidade" checked>
+                        <label class="form-check-label" for="disponibilidade">Disponível</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Adicionar Item</button>
+                </form>
+            </div>
+        </div>
+        <!-- Lista de itens -->
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Categoria</th>
+                        <th>Preço</th>
+                        <th>Disponível</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.nome }}</td>
+                        <td>{{ item.categoria }}</td>
+                        <td>R$ {{ item.preco }}</td>
+                        <td>{{ item.disponibilidade|yesno:"Sim,Não" }}</td>
+                        <td>
+                            <a href="{% url 'edit_menu_item' item.id %}" class="btn btn-sm btn-outline-dark">Editar</a>
+                            <a href="{% url 'delete_menu_item' item.id %}" class="btn btn-sm btn-danger">Remover</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">Nenhum item no cardápio.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

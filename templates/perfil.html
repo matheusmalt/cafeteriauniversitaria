@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Perfil - Cafeteria Universitária{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Meu Perfil</h2>
+    {% if messages %}
+        <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" class="form-control" id="nome" name="nome" value="{{ user.first_name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">E-mail</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+    </form>
+</div>
+{% endblock %}

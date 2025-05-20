@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Promoções - Cafeteria Universitária{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <h2 class="fw-bolder mb-4">Promoções Atuais</h2>
+        {% if promocoes %}
+            <div class="row gx-4 gx-lg-5">
+                {% for promocao in promocoes %}
+                    <div class="col-md-6 mb-5">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ promocao.titulo }}</h5>
+                                <p class="card-text">{{ promocao.descricao }}</p>
+                                <p class="card-text"><strong>Desconto:</strong> {{ promocao.desconto }}%</p>
+                                <p class="card-text"><small>Validade: {{ promocao.data_inicio|date:"d/m/Y" }} a {{ promocao.data_fim|date:"d/m/Y" }}</small></p>
+                            </div>
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center">
+                                    <a class="btn btn-primary" href="{% url 'menu' %}">Aproveitar no Menu</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Nenhuma promoção disponível no momento.</p>
+            <a href="{% url 'menu' %}" class="btn btn-outline-dark">Explorar Menu</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

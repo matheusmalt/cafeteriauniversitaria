@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cardápio{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <h2 class="fw-bolder mb-4">Cardápio</h2>
+        <!-- Search and Filters -->
+        <form class="mb-4" method="get" action="{% url 'menu' %}">
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" name="q" placeholder="Pesquisar itens..." value="{{ query }}">
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" name="categoria">
+                        <option value="">Todas as Categorias</option>
+                        {% for categoria in categorias %}
+                        <option value="{{ categoria }}" {% if categoria == selected_categoria %}selected{% endif %}>{{ categoria }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                </div>
+            </div>
+        </form>
+        <!-- Menu Items -->
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% for item in items %}
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <img class="card-img-top" src="{{ item.imagem }}" alt="{{ item.nome }}" />
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <h5 class="fw-bolder">{{ item.nome }}</h5>
+                            <p>R$ {{ item.preco }}</p>
+                            {% if not item.disponibilidade %}
+                            <p class="text-danger">Indisponível</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center">
+                            <a class="btn btn-outline-dark mt-auto {% if not item.disponibilidade %}disabled{% endif %}" href="{% url 'item_detail' item.id %}">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>Nenhum item encontrado.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

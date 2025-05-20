@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Pagamento do Pedido #{{ pedido.id }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <h2 class="fw-bolder mb-4">Pagamento do Pedido #{{ pedido.id }}</h2>
+        {% if messages %}
+            <div class="alert alert-dismissible fade show" role="alert">
+                {% for message in messages %}
+                    <div class="alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Resumo do Pedido</h4>
+                <ul class="list-group mb-4">
+                    {% for item in itens %}
+                    <li class="list-group-item">
+                        {{ item.item_menu.nome }} (x{{ item.quantidade }}): R$ {{ item.subtotal }}
+                    </li>
+                    {% endfor %}
+                    <li class="list-group-item list-group-item-primary">Total: R$ {{ total }}</li>
+                </ul>
+                <h4>Detalhes do Pedido</h4>
+                <p><strong>Cliente:</strong> {{ pedido.cliente.email }}</p>
+                <p><strong>Método de Entrega:</strong> {{ pedido.metodo_entrega }}</p>
+                {% if pedido.endereco_entrega %}
+                <p><strong>Endereço de Entrega:</strong> {{ pedido.endereco_entrega }}</p>
+                {% endif %}
+                <p><strong>Método de Pagamento:</strong> {{ pedido.metodo_pagamento }}</p>
+                <p><strong>Status:</strong> {{ pedido.get_status_display }}</p>
+            </div>
+            <div class="col-md-6">
+                <h4>Instruções de Pagamento</h4>
+                {% if pedido.metodo_pagamento == 'PIX' %}
+                <p>Escaneie o QR code abaixo ou use a chave PIX para realizar o pagamento:</p>
+                <img src="{% static 'images/qr_code_pix.png' %}" alt="QR Code PIX" class="img-fluid mb-3" style="max-width: 200px;">
+                <p><strong>Chave PIX:</strong> 12345678-9012-3456-7890-123456789012</p>
+                <p>Após o pagamento, o pedido será processado em até 1 hora.</p>
+                {% else %}
+                <p>Você será redirecionado para a plataforma de pagamento com cartão de crédito após a confirmação.</p>
+                <p>Por favor, tenha seu cartão pronto para concluir a transação.</p>
+                {% endif %}
+                <a href="{% url 'homepage' %}" class="btn btn-primary mt-3">Voltar à Página Inicial</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

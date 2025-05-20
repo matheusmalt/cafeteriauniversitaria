@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Painel Administrativo - Cafeteria Universitária{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <h2 class="fw-bolder mb-4">Painel Administrativo</h2>
+        <p>Bem-vindo ao painel da Cafeteria Universitária. Escolha uma opção:</p>
+
+        {% if messages %}
+            <div class="alert alert-dismissible fade show" role="alert">
+                {% for message in messages %}
+                    <div class="alert-{% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Gerenciar Menu</h5>
+                        <p class="card-text">Adicione, edite ou remova itens do menu.</p>
+                        <a href="{% url 'admin_menu' %}" class="btn btn-primary">Acessar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Gerenciar Pedidos</h5>
+                        <p class="card-text">Visualize e gerencie pedidos dos clientes.</p>
+                        <a href="{% url 'gerenciar_pedidos' %}" class="btn btn-primary">Acessar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Gerenciar Promoções</h5>
+                        <p class="card-text">Crie, edite ou remova promoções para itens do menu.</p>
+                        <a href="{% url 'admin_promocoes' %}" class="btn btn-primary">Acessar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

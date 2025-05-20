@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gerenciar Menu - Cafeteria Universitária{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <h2 class="fw-bolder mb-4">Gerenciar Menu</h2>
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary mb-4">Voltar ao Painel</a>
+
+        <h3>Adicionar Novo Item</h3>
+        <form method="post" action="{% url 'add_menu_item' %}" enctype="multipart/form-data" id="add-item-form">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="nome" name="nome" value="{{ form_data.nome|default:'' }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="descricao" class="form-label">Descrição</label>
+                <textarea class="form-control" id="descricao" name="descricao" required>{{ form_data.descricao|default:'' }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="preco" class="form-label">Preço (R$)</label>
+                <input type="number" step="0.01" class="form-control" id="preco" name="preco" value="{{ form_data.preco|default:'' }}" required min="0.01">
+            </div>
+            <div class="mb-3">
+                <label for="categoria" class="form-label">Categoria</label>
+                <select class="form-select" id="categoria" name="categoria" required>
+                    <option value="" disabled {% if not form_data.categoria %}selected{% endif %}>Selecione uma categoria</option>
+                    <option value="Bebidas" {% if form_data.categoria == 'Bebidas' %}selected{% endif %}>Bebidas</option>
+                    <option value="Alimentos" {% if form_data.categoria == 'Alimentos' %}selected{% endif %}>Alimentos</option>
+                    <option value="Sobremesas" {% if form_data.categoria == 'Sobremesas' %}selected{% endif %}>Sobremesas</option>
+                </select>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="disponibilidade" name="disponibilidade" {% if form_data.disponibilidade %}checked{% endif %}>
+                <label class="form-check-label" for="disponibilidade">Disponível</label>
+            </div>
+            <div class="mb-3">
+                <label for="imagem" class="form-label">Imagem</label>
+                <input type="file" class="form-control" id="imagem" name="imagem" accept="image/*">
+            </div>
+            <div class="mb-3">
+                <label for="ingredientes" class="form-label">Ingredientes</label>
+                <textarea class="form-control" id="ingredientes" name="ingredientes">{{ form_data.ingredientes|default:'' }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="opcoes" class="form-label">Opções (separadas por vírgula)</label>
+                <input type="text" class="form-control" id="opcoes" name="opcoes" value="{{ form_data.opcoes|default:'' }}" placeholder="Ex.: Pequeno, Médio, Grande">
+            </div>
+            <button type="submit" class="btn btn-primary">Adicionar Item</button>
+        </form>
+
+        <h3 class="mt-5">Itens do Menu</h3>
+        {% if items %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Categoria</th>
+                            <th>Disponível</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            <tr>
+                                <td>{{ item.nome }}</td>
+                                <td>R$ {{ item.preco|floatformat:2 }}</td>
+                                <td>{{ item.categoria }}</td>
+                                <td>{{ item.disponibilidade|yesno:"Sim,Não" }}</td>
+                                <td>
+                                    <a href="{% url 'edit_menu_item' item.id %}" class="btn btn-sm btn-warning">Editar</a>
+                                    <form method="post" action="{% url 'delete_menu_item' item.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir {{ item.nome }}?')">Excluir</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">Nenhum item no menu.</p>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+    document.getElementById('add-item-form').addEventListener('submit', function(e) {
+        const preco = document.getElementById('preco').value;
+        if (preco <= 0) {
+            e.preventDefault();
+            alert('O preço deve ser maior que zero.');
+        }
+    });
+</script>
+{% endblock %}

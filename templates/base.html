@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>{% block title %}{% endblock %}</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <!-- Core theme CSS -->
+        <style>
+            html {
+                height: 100%;
+            }
+
+            body {
+                min-height: 100%;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+            }
+
+            main {
+                flex: 1 0 auto;
+            }
+
+            footer {
+                flex-shrink: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'homepage' %}">Cafeteria Universitária</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'menu' %}">Menu</a></li>
+                        {% if user.is_authenticated %}
+                            {% if user.is_staff %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'admin_dashboard' %}">Painel Administrativo</a></li>
+                            {% endif %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'cart' %}">Carrinho</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'perfil' %}">Perfil</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Sair</a></li>
+                        {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Cadastro</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Main Content -->
+        <main>
+            {% if messages %}
+            <div class="container px-4 px-lg-5">
+                {% for message in messages %}
+                <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright © Cafeteria Universitária 2025</p></div>
+        </footer>
+
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+    </body>
+</html>
